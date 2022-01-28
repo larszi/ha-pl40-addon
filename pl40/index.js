@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import axios from 'axios';
-
+import FormData from 'form-data';
 
 console.log('Init.')
 var cookie

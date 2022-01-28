@@ -1,7 +1,7 @@
 {
   "slug": "pl40_bridge",
   "name": "Pl40 Bridge",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "url": "https://github.com/larszi/ha-pl40-addon",
   "stage": "stable",
   "description": "Bridge to PL40 devices",
