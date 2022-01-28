@@ -1,0 +1,12 @@
+{
+  "slug": "pl40_bridge",
+  "name": "Pl40 Bridge",
+  "version": "1.0.2",
+  "url": "https://github.com/larszi/ha-pl40-addon",
+  "stage": "stable",
+  "description": "Bridge to PL40 devices",
+  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "startup": "services",
+  "boot": "auto",
+  "map": []
+}
