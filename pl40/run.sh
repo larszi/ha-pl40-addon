@@ -1,8 +1,11 @@
 #!/usr/bin/with-contenv bashio
 set +u
 
-# export REFRESH_TOKEN=$(bashio::config 'refresh_token')
-# bashio::log.info "Refresh token configured as ${REFRESH_TOKEN}."
+export USERNAME=$(bashio::config 'username')
+bashio::log.info "Username configured as ${USERNAME}."
+
+export PASSWORD=$(bashio::config 'password')
+bashio::log.info "Password configured as ${PASSWORD}."
 
 bashio::log.info "Starting bridge service."
 npm run start
