@@ -9,11 +9,33 @@ const form = new FormData();
 
 var username = process.env.USERNAME
 var password = process.env.PASSWORD
+
+const dashboard_id = process.env.DASHBOARD
 console.log('Username. %s', username)
 console.log('password. %s', password)
+console.log('Dashboard %s', dashboard_id)
+
+var mqtt_username = process.env.MQTTUSER
+var mqtt_password = process.env.MQTTPW
+var mqtt_url = process.env.MQTTURL
+
+console.log('MQTT Username. %s', mqtt_username)
+console.log('MQTT password. %s', mqtt_password)
+console.log('MQTT URL. %s', mqtt_url)
 
 form.append('username', username);
 form.append('password', password);
+
+const options = {
+  username: mqtt_username,
+  password: mqtt_password,
+}
+
+const client  = mqtt.connect(mqtt_url,options)
+
+client.on('connect', function () {
+  console.log("connect");
+})
 
 axios.post('https://www.plexlog.de/login/', form, {
   headers: form.getHeaders(),
@@ -31,7 +53,7 @@ axios.post('https://www.plexlog.de/login/', form, {
 
     
   ws.on('open', function open() {
-    ws.send('dashboard:9221:2165270087');
+    ws.send(dashboard_id);
     ws.send('--heartbeat--');
   });
 
@@ -50,11 +72,19 @@ axios.post('https://www.plexlog.de/login/', form, {
     CurrentUsage = dataraw.toString().split(';')[64]
     CurrentUsageFromNetwork = dataraw.toString().split(';')[63]
     CurrentBatterieLoadingAmount = dataraw.toString().split(';')[65]
+
     console.log("------------");
+    client.publish('solar/BatterieStand', BatterieStand)
     console.log("BatterieStand %s", BatterieStand);
+    client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString())
     console.log("CurrentPowerSolar %s", CurrentPowerSolar);
+    client.publish('solar/CurrentUsage', CurrentUsage)
     console.log("CurrentUsage %s", CurrentUsage);
+    client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork)
     console.log("CurrentUsageFromNetwork %s", CurrentUsageFromNetwork);
+    client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount)
     console.log("CurrentBatterieLoadingAmount %s", CurrentBatterieLoadingAmount);
+
+
   });
 });

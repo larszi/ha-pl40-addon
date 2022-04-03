@@ -11,10 +11,18 @@
   "map": [],
   "options": {
   	"username": "Add Username",
-    "password": "AddPassword"
+    "password": "Add Password",
+    "dashboard": "Add Dashboard ID",
+    "mqttuser": "Add MQTT Username",
+    "mqttpw": "Add MQTT PW",
+    "mqtturl": "Add MQTT URL"
   },
   "schema": {
     "username": "str",
-    "password": "str"
+    "password": "str",
+    "dashboard": "str",
+    "mqttuser": "str",
+    "mqttpw": "str",
+    "mqtturl": "str"
   }
 }
