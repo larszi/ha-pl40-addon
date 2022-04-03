@@ -32,6 +32,13 @@ const options = {
   password: mqtt_password,
 }
 
+//Change this diry shit later! (Reload token after 24h) WatchDog will restart  
+function exitPlugin() {
+  console.log("Exit Plugin");
+  process.exit(1);
+}
+setTimeout(exitPlugin, 86400000);
+
 const client  = mqtt.connect(mqtt_url,options)
 
 client.on('connect', function () {
