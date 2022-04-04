@@ -31,7 +31,6 @@ const options = {
   username: mqtt_username,
   password: mqtt_password,
 }
-
 //Change this diry shit later! (Reload token after 24h) WatchDog will restart  
 function exitPlugin() {
   console.log("Exit Plugin");
@@ -48,7 +47,6 @@ client.on('connect', function () {
 axios.post('https://www.plexlog.de/login/', form, {
   headers: form.getHeaders(),
 }).then(result => {
-  // Handle result…
   
   cookie = result.headers['set-cookie']
   console.log(cookie[0].split('; ')[0]);
@@ -58,16 +56,18 @@ axios.post('https://www.plexlog.de/login/', form, {
       Cookie: cookie
      },
     });
-
     
   ws.on('open', function open() {
     ws.send(dashboard_id);
     ws.send('--heartbeat--');
+    setInterval(sendHeartbeat, 3500000, ws)
   });
 
-  ws.on('message', function message(data) {
-    
+  function sendHeartbeat(w) {
+    w.send('--heartbeat--');
+  }
 
+  ws.on('message', function message(data) {
     var dataraw = data;
 
     var BatterieStand;
@@ -81,18 +81,11 @@ axios.post('https://www.plexlog.de/login/', form, {
     CurrentUsageFromNetwork = dataraw.toString().split(';')[63]
     CurrentBatterieLoadingAmount = dataraw.toString().split(';')[65]
 
-    console.log("------------");
     client.publish('solar/BatterieStand', BatterieStand)
-    console.log("BatterieStand %s", BatterieStand);
     client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString())
-    console.log("CurrentPowerSolar %s", CurrentPowerSolar);
     client.publish('solar/CurrentUsage', CurrentUsage)
-    console.log("CurrentUsage %s", CurrentUsage);
     client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork)
-    console.log("CurrentUsageFromNetwork %s", CurrentUsageFromNetwork);
     client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount)
-    console.log("CurrentBatterieLoadingAmount %s", CurrentBatterieLoadingAmount);
-
 
   });
 });
