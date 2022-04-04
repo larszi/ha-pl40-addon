@@ -65,3 +65,8 @@ sensor x:
   unique_id: currentbatterieloadingamount 
 
 ```
+
+## Roadmap 
+
+- Support Local Readout of Unit!!
+
