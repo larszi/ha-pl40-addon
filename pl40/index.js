@@ -36,7 +36,7 @@ function exitPlugin() {
   console.log("Exit Plugin");
   process.exit(1);
 }
-setTimeout(exitPlugin, 86400000);
+setTimeout(exitPlugin, 3600000);
 
 const client  = mqtt.connect(mqtt_url,options)
 
@@ -66,6 +66,7 @@ axios.post('https://www.plexlog.de/login/', form, {
   function sendHeartbeat(w) {
     w.send('--heartbeat--');
   }
+
 
   ws.on('message', function message(data) {
     var dataraw = data;
