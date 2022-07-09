@@ -7,6 +7,7 @@
   "description": "Bridge to PL40 devices",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
   "startup": "services",
+  "init": "false",
   "boot": "auto",
   "map": [],
   "options": {
