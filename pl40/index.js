@@ -13,7 +13,7 @@ var password = process.env.PASSWORD
 
 const dashboard_id = process.env.DASHBOARD
 console.log('Username. %s', username)
-console.log('password. %s', password)
+console.log('password. ****')
 console.log('Dashboard %s', dashboard_id)
 
 var mqtt_username = process.env.MQTTUSER
@@ -62,6 +62,12 @@ axios.post('https://www.plexlog.de/login/', form, {
     ws.send('--heartbeat--');
     setInterval(sendHeartbeat, 3500000, ws)
   });
+
+  ws.on('error', function errorFunc(err){
+    console.log(err)
+    console.log("Error on WS Connection (Exit Add-On -> WatchDog Restart)");
+    exitPlugin();
+  })
 
   function sendHeartbeat(w) {
     w.send('--heartbeat--');
