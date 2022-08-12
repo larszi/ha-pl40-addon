@@ -1,7 +1,7 @@
 # Plexlog HomeAssistant AddOn
 
 
-## :tada: This Addon will allow you to add Plexlog to our HomeAssistant 
+## :tada: This Addon will allow you to add Plexlog to your HomeAssistant 
 
 ## Features
 
