@@ -36,6 +36,9 @@ function exitPlugin() {
   console.log("Exit Plugin");
   process.exit(1);
 }
+setTimeout(mainWS, 3600000);
+
+
 const client  = mqtt.connect(mqtt_url,options)
 
 client.on('connect', function () {
