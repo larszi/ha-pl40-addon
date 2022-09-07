@@ -36,63 +36,70 @@ function exitPlugin() {
   console.log("Exit Plugin");
   process.exit(1);
 }
-setTimeout(exitPlugin, 3600000);
-
 const client  = mqtt.connect(mqtt_url,options)
 
 client.on('connect', function () {
   console.log("connect");
 })
 
-axios.post('https://www.plexlog.de/login/', form, {
-  headers: form.getHeaders(),
-}).then(result => {
-  
-  cookie = result.headers['set-cookie']
-  console.log(cookie[0].split('; ')[0]);
 
-  ws = new WebSocket('wss://live.plexlog.de/websockets/', {
-    headers: {
-      Cookie: cookie
-     },
-    });
+mainWS();
+
+function mainWS() {
+  console.log("Init WS");
+
+  axios.post('https://www.plexlog.de/login/', form, {
+    headers: form.getHeaders(),
+  }).then(result => {
     
-  ws.on('open', function open() {
-    ws.send(dashboard_id);
-    ws.send('--heartbeat--');
-    setInterval(sendHeartbeat, 3500000, ws)
+    cookie = result.headers['set-cookie']
+    console.log(cookie[0].split('; ')[0]);
+  
+    ws = new WebSocket('wss://live.plexlog.de/websockets/', {
+      headers: {
+        Cookie: cookie
+       },
+      });
+      
+    ws.on('open', function open() {
+      ws.send(dashboard_id);
+      ws.send('--heartbeat--');
+      setInterval(sendHeartbeat, 2500000, ws)
+    });
+  
+    ws.on('error', function errorFunc(err){
+      console.log(err)
+      mainWS();
+    })
+  
+    function sendHeartbeat(w) {
+      w.send('--heartbeat--');
+    }
+  
+  
+    ws.on('message', function message(data) {
+      var dataraw = data;
+  
+      var BatterieStand;
+      var CurrentPowerSolar;
+      var CurrentUsage;
+      var CurrentUsageFromNetwork;
+      var CurrentBatterieLoadingAmount;
+      BatterieStand = dataraw.toString().split(';')[66]
+      CurrentPowerSolar = dataraw.toString().split(';')[60]
+      CurrentUsage = dataraw.toString().split(';')[64]
+      CurrentUsageFromNetwork = dataraw.toString().split(';')[63]
+      CurrentBatterieLoadingAmount = dataraw.toString().split(';')[65]
+  
+      client.publish('solar/BatterieStand', BatterieStand)
+      client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString())
+      client.publish('solar/CurrentUsage', CurrentUsage)
+      client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork)
+      client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount)
+  
+    });
   });
 
-  ws.on('error', function errorFunc(err){
-    console.log(err)
-    console.log("Error on WS Connection (Exit Add-On -> WatchDog Restart)");
-    exitPlugin();
-  })
-
-  function sendHeartbeat(w) {
-    w.send('--heartbeat--');
-  }
+}
 
 
-  ws.on('message', function message(data) {
-    var dataraw = data;
-
-    var BatterieStand;
-    var CurrentPowerSolar;
-    var CurrentUsage;
-    var CurrentUsageFromNetwork;
-    var CurrentBatterieLoadingAmount;
-    BatterieStand = dataraw.toString().split(';')[66]
-    CurrentPowerSolar = dataraw.toString().split(';')[60]
-    CurrentUsage = dataraw.toString().split(';')[64]
-    CurrentUsageFromNetwork = dataraw.toString().split(';')[63]
-    CurrentBatterieLoadingAmount = dataraw.toString().split(';')[65]
-
-    client.publish('solar/BatterieStand', BatterieStand)
-    client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString())
-    client.publish('solar/CurrentUsage', CurrentUsage)
-    client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork)
-    client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount)
-
-  });
-});
