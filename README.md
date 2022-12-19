@@ -10,6 +10,7 @@
 - Read CurrentPowerSolar :sun_with_face: , BatterieLevel :battery:, NetworkUsage :dollar:, BatterieUsage :electric_plug:
 - Built with MQTT, Nodejs
 
+![HA Image](./imgs/ha.png)
 
 ## How to use this AddOn
 
