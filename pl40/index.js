@@ -2,6 +2,8 @@ import WebSocket from 'ws';
 import mqtt from 'mqtt';
 import axios from 'axios';
 import FormData from 'form-data';
+const express = require('express')
+
 
 console.log('Init.')
 var cookie
@@ -45,6 +47,18 @@ client.on('connect', function () {
   console.log("connect");
 })
 
+const app = express()
+const port = 3000
+
+
+app.get('/watchdog', (req, res) => {
+  res.status(200);
+  res.send()
+})
+
+app.listen(port, () => {
+  console.log(`Watchdog Endpoint ${port}`)
+})
 
 mainWS();
 
@@ -71,6 +85,7 @@ function mainWS() {
     });
   
     ws.on('error', function errorFunc(err){
+      console.log('websocket error')
       console.log(err)
       mainWS();
     })
@@ -78,6 +93,7 @@ function mainWS() {
     function sendHeartbeat(w) {
       w.send('--heartbeat--');
     }
+
   
   
     ws.on('message', function message(data) {
