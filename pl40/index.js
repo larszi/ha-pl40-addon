@@ -4,9 +4,6 @@ import axios from 'axios';
 import FormData from 'form-data';
 import express from 'express';
 
-const express = express();
-
-
 console.log('Init.')
 var cookie
 var ws
