@@ -2,7 +2,9 @@ import WebSocket from 'ws';
 import mqtt from 'mqtt';
 import axios from 'axios';
 import FormData from 'form-data';
-const express = require('express')
+import express from 'express';
+
+const express = express();
 
 
 console.log('Init.')
