@@ -79,7 +79,7 @@ function mainWS() {
 
     ws.on('open', function open() {
       ws.send(dashboard_id);
-      ws.send('--heartbeat--');
+      console.log("send dashboard_id " + dashboard_id)
       setInterval(sendHeartbeat, 2500000, ws)
     });
 
@@ -91,6 +91,7 @@ function mainWS() {
     })
 
     function sendHeartbeat(w) {
+      console.log("send heartbeat")
       w.send('--heartbeat--');
     }
 
@@ -104,18 +105,22 @@ function mainWS() {
       var CurrentUsage;
       var CurrentUsageFromNetwork;
       var CurrentBatterieLoadingAmount;
-      BatterieStand = dataraw.toString().split(';')[66]
-      CurrentPowerSolar = dataraw.toString().split(';')[60]
-      CurrentUsage = dataraw.toString().split(';')[64]
-      CurrentUsageFromNetwork = dataraw.toString().split(';')[63]
-      CurrentBatterieLoadingAmount = dataraw.toString().split(';')[65]
 
-      client.publish('solar/BatterieStand', BatterieStand)
-      client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString())
-      client.publish('solar/CurrentUsage', CurrentUsage)
-      client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork)
-      client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount)
+      //Only check for data messages
+      if(!dataraw.toString().includes('Connected;')) {
 
+        BatterieStand = dataraw.toString().split(';')[66]
+        CurrentPowerSolar = dataraw.toString().split(';')[60]
+        CurrentUsage = dataraw.toString().split(';')[64]
+        CurrentUsageFromNetwork = dataraw.toString().split(';')[63]
+        CurrentBatterieLoadingAmount = dataraw.toString().split(';')[65]
+
+        client.publish('solar/BatterieStand', BatterieStand)
+        client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString())
+        client.publish('solar/CurrentUsage', CurrentUsage)
+        client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork)
+        client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount)
+      }
     });
   });
 
