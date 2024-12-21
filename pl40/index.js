@@ -71,9 +71,19 @@ app.listen(port, () => {
 })
 
 mainWS();
+var reset_interval = process.env.reset_interval || 'true';
+if (reset_interval){
+  setInterval(mainWS, 900000, mainWS)
+}
+
+function sendHeartbeat(w) {
+  log.debug("Send heartbeat")
+  w.send(heartbeat_msg);
+}
 
 function mainWS() {
-  log.info("Initializing WebSocket connection...");
+  log.info("Initializing/Reseting WebSocket connection...");
+
 
   axios.post('https://www.plexlog.de/login/', form, {
     headers: form.getHeaders(),
@@ -111,11 +121,6 @@ function mainWS() {
       exit(1);
       mainWS();
     })
-
-    function sendHeartbeat(w) {
-      log.debug("Send heartbeat")
-      w.send(heartbeat_msg);
-    }
 
 
 

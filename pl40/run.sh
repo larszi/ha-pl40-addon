@@ -25,5 +25,8 @@ bashio::log.info "Loglevel conigured as '${LOG_LEVEL}' if emty using default 'in
 export HEARTBEAT_MSG=$(bashio::config 'heartbeat_msg')
 bashio::log.info "Heartbeat message configured as '${HEARTBEAT_MSG}'."
 
+export reset_interval=$(bashio::config 'reset_interval')
+bashio::log.info "15min reset interval configured as '${reset_interval}'."
+
 bashio::log.info "Starting bridge service."
 npm run start

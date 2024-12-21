@@ -1,3 +1,6 @@
+# v1.1.27
+feat: add 15min reset interval
+
 # v1.1.25
 feat: ajusted heartbeat timer
 
