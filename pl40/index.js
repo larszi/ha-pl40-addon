@@ -69,7 +69,6 @@ function mainWS() {
   }).then(result => {
 
     cookie = result.headers['set-cookie']
-    console.log(cookie[0].split('; ')[0]);
 
     ws = new WebSocket('wss://live.plexlog.de/websockets/', {
       headers: {
@@ -109,17 +108,29 @@ function mainWS() {
       //Only check for data messages
       if(!dataraw.toString().includes('Connected;')) {
 
-        BatterieStand = dataraw.toString().split(';')[66]
-        CurrentPowerSolar = dataraw.toString().split(';')[60]
-        CurrentUsage = dataraw.toString().split(';')[64]
-        CurrentUsageFromNetwork = dataraw.toString().split(';')[63]
-        CurrentBatterieLoadingAmount = dataraw.toString().split(';')[65]
+      console.log("Got Data WS Message");
 
-        client.publish('solar/BatterieStand', BatterieStand)
-        client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString())
-        client.publish('solar/CurrentUsage', CurrentUsage)
-        client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork)
-        client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount)
+      const datarawString = dataraw.toString();
+      const lines = datarawString.split('\n');
+      const efLines = lines.filter(line => line.startsWith('ef;'));
+
+
+        if (efLines.length >= 2) {
+
+          const efData2 = efLines[1].split(';');
+
+          BatterieStand = efData2[7]; // soc
+          CurrentPowerSolar = efData2[1]; // pwr
+          CurrentUsage = efData2[5]; // usg
+          CurrentUsageFromNetwork = efData2[4]; // grd
+          CurrentBatterieLoadingAmount = efData2[6]; // bat
+
+            client.publish('solar/BatterieStand', BatterieStand);
+            client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString());
+            client.publish('solar/CurrentUsage', CurrentUsage);
+            client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork);
+            client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount);
+        }
       }
     });
   });

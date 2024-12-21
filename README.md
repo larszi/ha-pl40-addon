@@ -1,6 +1,6 @@
 # Plexlog HomeAssistant AddOn
 
-## !Note! This Plugin is only a temporary solution as I am currenly working on a LOCAL only Version of this Puglin!
+## !Note! This Plugin is only a temporary solution as I am currently working on a LOCAL only Version of this Plugin!
 
 
 ## :tada: This Addon will allow you to add Plexlog to your HomeAssistant 
