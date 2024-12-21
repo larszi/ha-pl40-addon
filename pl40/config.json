@@ -27,6 +27,6 @@
     "mqttuser": "str",
     "mqttpw": "str",
     "mqtturl": "str",
-    "log_level": "list('info', 'debug', 'warn', 'error')"
+    "log_level": "str"
   }
 }
