@@ -22,5 +22,8 @@ bashio::log.info "MQTT url configured as ${MQTTURL}."
 export LOG_LEVEL=$(bashio::config 'log_level')
 bashio::log.info "Loglevel conigured as '${LOG_LEVEL}' if emty using default 'info'."
 
+export HEARTBEAT_MSG=$(bashio::config 'heartbeat_msg')
+bashio::log.info "Heartbeat message configured as '${HEARTBEAT_MSG}'."
+
 bashio::log.info "Starting bridge service."
 npm run start

@@ -18,7 +18,7 @@ log.debug('Debug mode enabled');
 var cookie, ws, wsHeartbeat
 const form = new FormData();
 
-
+var heartbeat_msg = process.env.HEARTBEAT_MSG || '--heartbeat--';
 
 var username = process.env.USERNAME
 var password = process.env.PASSWORD
@@ -114,7 +114,7 @@ function mainWS() {
 
     function sendHeartbeat(w) {
       log.debug("Send heartbeat")
-      w.send('--heartbeat--');
+      w.send(heartbeat_msg);
     }
 
 
