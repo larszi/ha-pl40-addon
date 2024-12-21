@@ -1,4 +1,4 @@
-# v1.1.22
+# v1.1.23
 feat: better logging with log level
 
 # v1.1.21
