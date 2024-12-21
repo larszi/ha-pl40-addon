@@ -15,8 +15,7 @@ log.info('Starting up...');
 log.debug('Debug mode enabled');
 
 
-var cookie
-var ws
+var cookie, ws, wsHeartbeat
 const form = new FormData();
 
 
@@ -88,10 +87,21 @@ function mainWS() {
        },
       });
 
+    wsHeartbeat = new WebSocket('wss://plexlog.de/websockets/', {
+      headers: {
+        Cookie: cookie
+        },
+      });
+
+    wsHeartbeat.on('open', function open() {
+      log.info("Opened Heartbeat connection")
+      setInterval(sendHeartbeat, 54000, wsHeartbeat)
+    });
+
     ws.on('open', function open() {
       ws.send(dashboard_id);
       log.info("Send dashboard_id: '%s'", dashboard_id)
-      setInterval(sendHeartbeat, 200000, ws)
+      setInterval(sendHeartbeat, 54000, ws)
       log.info("Successfully connected to WebSocket server");
     });
 
@@ -103,7 +113,7 @@ function mainWS() {
     })
 
     function sendHeartbeat(w) {
-      log.debug("send heartbeat")
+      log.debug("Send heartbeat")
       w.send('--heartbeat--');
     }
 
