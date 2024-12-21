@@ -19,5 +19,8 @@ bashio::log.info "MQTT PW configured as ${MQTTPW}."
 export MQTTURL=$(bashio::config 'mqtturl')
 bashio::log.info "MQTT url configured as ${MQTTURL}."
 
+export LOG_LEVEL=$(bashio::config 'log_level')
+bashio::log.info "Loglevel conigured as '${LOG_LEVEL}' if emty using default 'info'."
+
 bashio::log.info "Starting bridge service."
 npm run start

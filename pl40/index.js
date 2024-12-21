@@ -3,27 +3,38 @@ import mqtt from 'mqtt';
 import axios from 'axios';
 import FormData from 'form-data';
 import express from 'express';
+import 'log-timestamp';
+import log from 'loglevel';
 
-console.log('Init.')
+
+const logLevel = process.env.LOG_LEVEL || 'info';
+console.log("Log level set to '%s'", logLevel);
+log.setLevel(logLevel);
+
+console.info('Starting up...');
+
+
 var cookie
 var ws
 const form = new FormData();
+
+
 
 var username = process.env.USERNAME
 var password = process.env.PASSWORD
 
 const dashboard_id = process.env.DASHBOARD
-console.log('Username. %s', username)
-console.log('password. ****')
-console.log('Dashboard %s', dashboard_id)
+console.debug('Username. %s', username)
+console.debug('password. ****')
+console.debug('Dashboard %s', dashboard_id)
 
 var mqtt_username = process.env.MQTTUSER
 var mqtt_password = process.env.MQTTPW
 var mqtt_url = process.env.MQTTURL
 
-console.log('MQTT Username. %s', mqtt_username)
-console.log('MQTT password. %s', mqtt_password)
-console.log('MQTT URL. %s', mqtt_url)
+console.debug('MQTT Username. %s', mqtt_username)
+console.debug('MQTT password. %s', mqtt_password)
+console.debug('MQTT URL. %s', mqtt_url)
 
 form.append('username', username);
 form.append('password', password);
@@ -34,7 +45,7 @@ const options = {
 }
 //Change this diry shit later! (Reload token after 24h) WatchDog will restart
 function exitPlugin() {
-  console.log("Exit Plugin");
+  console.info("Exit Plugin");
   process.exit(1);
 }
 setTimeout(mainWS, 3600000);
@@ -43,7 +54,7 @@ setTimeout(mainWS, 3600000);
 const client  = mqtt.connect(mqtt_url,options)
 
 client.on('connect', function () {
-  console.log("connect");
+  console.info("Successfully connected to MQTT server");
 })
 
 const app = express()
@@ -56,13 +67,13 @@ app.get('/watchdog', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Watchdog Endpoint ${port}`)
+  console.log(`Watchdog endpoint is up and running on port ${port}`)
 })
 
 mainWS();
 
 function mainWS() {
-  console.log("Init WS");
+  console.info("Initializing WebSocket connection...");
 
   axios.post('https://www.plexlog.de/login/', form, {
     headers: form.getHeaders(),
@@ -78,25 +89,27 @@ function mainWS() {
 
     ws.on('open', function open() {
       ws.send(dashboard_id);
-      console.log("send dashboard_id " + dashboard_id)
+      console.info("Send dashboard_id: '%s'", dashboard_id)
       setInterval(sendHeartbeat, 2500000, ws)
     });
 
     ws.on('error', function errorFunc(err){
-      console.log('websocket error')
-      console.log(err)
+      console.error('websocket error')
+      console.error(err)
       exit(1);
       mainWS();
     })
 
     function sendHeartbeat(w) {
-      console.log("send heartbeat")
+      console.debug("send heartbeat")
       w.send('--heartbeat--');
     }
 
 
 
     ws.on('message', function message(data) {
+      console.debug('Go Message from WS');
+ 
       var dataraw = data;
 
       var BatterieStand;
@@ -108,15 +121,12 @@ function mainWS() {
       //Only check for data messages
       if(!dataraw.toString().includes('Connected;')) {
 
-      console.log("Got Data WS Message");
-
       const datarawString = dataraw.toString();
       const lines = datarawString.split('\n');
       const efLines = lines.filter(line => line.startsWith('ef;'));
 
 
         if (efLines.length >= 2) {
-
           const efData2 = efLines[1].split(';');
 
           BatterieStand = efData2[7]; // soc
@@ -125,12 +135,19 @@ function mainWS() {
           CurrentUsageFromNetwork = efData2[4]; // grd
           CurrentBatterieLoadingAmount = efData2[6]; // bat
 
+          console.debug("Got Data WS Message with Solar Power: '%s' and usage: '%s'", CurrentPowerSolar, CurrentUsage);
+
             client.publish('solar/BatterieStand', BatterieStand);
             client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString());
             client.publish('solar/CurrentUsage', CurrentUsage);
             client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork);
             client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount);
+
+            console.debug("Published to MQTT");
         }
+      }
+      else {
+        console.debug("Got non Data Message")
       }
     });
   });

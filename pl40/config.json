@@ -1,7 +1,7 @@
 {
   "slug": "pl40_bridge",
   "name": "Pl40 Bridge",
-  "version": "1.1.21",
+  "version": "1.1.22",
   "url": "https://github.com/larszi/ha-pl40-addon",
   "stage": "stable",
   "description": "Bridge to PL40 devices",
@@ -17,7 +17,8 @@
     "dashboard": "Add Dashboard ID",
     "mqttuser": "Add MQTT Username",
     "mqttpw": "Add MQTT PW",
-    "mqtturl": "Add MQTT URL"
+    "mqtturl": "Add MQTT URL",
+    "log_level": "info"
   },
   "schema": {
     "username": "str",
@@ -25,6 +26,7 @@
     "dashboard": "str",
     "mqttuser": "str",
     "mqttpw": "str",
-    "mqtturl": "str"
+    "mqtturl": "str",
+    "log_level": "list('info', 'debug', 'warn', 'error')"
   }
 }
