@@ -8,10 +8,11 @@ import log from 'loglevel';
 
 
 const logLevel = process.env.LOG_LEVEL || 'info';
-console.log("Log level set to '%s'", logLevel);
+log.log("Log level set to '%s'", logLevel);
 log.setLevel(logLevel);
 
-console.info('Starting up...');
+log.info('Starting up...');
+log.debug('Debug mode enabled');
 
 
 var cookie
@@ -24,17 +25,17 @@ var username = process.env.USERNAME
 var password = process.env.PASSWORD
 
 const dashboard_id = process.env.DASHBOARD
-console.debug('Username. %s', username)
-console.debug('password. ****')
-console.debug('Dashboard %s', dashboard_id)
+log.debug('Username. %s', username)
+log.debug('password. ****')
+log.debug('Dashboard %s', dashboard_id)
 
 var mqtt_username = process.env.MQTTUSER
 var mqtt_password = process.env.MQTTPW
 var mqtt_url = process.env.MQTTURL
 
-console.debug('MQTT Username. %s', mqtt_username)
-console.debug('MQTT password. %s', mqtt_password)
-console.debug('MQTT URL. %s', mqtt_url)
+log.debug('MQTT Username. %s', mqtt_username)
+log.debug('MQTT password. %s', mqtt_password)
+log.debug('MQTT URL. %s', mqtt_url)
 
 form.append('username', username);
 form.append('password', password);
@@ -45,7 +46,7 @@ const options = {
 }
 //Change this diry shit later! (Reload token after 24h) WatchDog will restart
 function exitPlugin() {
-  console.info("Exit Plugin");
+  log.info("Exit Plugin");
   process.exit(1);
 }
 setTimeout(mainWS, 3600000);
@@ -54,7 +55,7 @@ setTimeout(mainWS, 3600000);
 const client  = mqtt.connect(mqtt_url,options)
 
 client.on('connect', function () {
-  console.info("Successfully connected to MQTT server");
+  log.info("Successfully connected to MQTT server");
 })
 
 const app = express()
@@ -67,13 +68,13 @@ app.get('/watchdog', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Watchdog endpoint is up and running on port ${port}`)
+  log.log(`Watchdog endpoint is up and running on port ${port}`)
 })
 
 mainWS();
 
 function mainWS() {
-  console.info("Initializing WebSocket connection...");
+  log.info("Initializing WebSocket connection...");
 
   axios.post('https://www.plexlog.de/login/', form, {
     headers: form.getHeaders(),
@@ -89,26 +90,27 @@ function mainWS() {
 
     ws.on('open', function open() {
       ws.send(dashboard_id);
-      console.info("Send dashboard_id: '%s'", dashboard_id)
+      log.info("Send dashboard_id: '%s'", dashboard_id)
       setInterval(sendHeartbeat, 2500000, ws)
+      log.info("Successfully connected to WebSocket server");
     });
 
     ws.on('error', function errorFunc(err){
-      console.error('websocket error')
-      console.error(err)
+      log.error('websocket error')
+      log.error(err)
       exit(1);
       mainWS();
     })
 
     function sendHeartbeat(w) {
-      console.debug("send heartbeat")
+      log.debug("send heartbeat")
       w.send('--heartbeat--');
     }
 
 
 
     ws.on('message', function message(data) {
-      console.debug('Go Message from WS');
+      log.debug('Go Message from WS');
  
       var dataraw = data;
 
@@ -135,7 +137,7 @@ function mainWS() {
           CurrentUsageFromNetwork = efData2[4]; // grd
           CurrentBatterieLoadingAmount = efData2[6]; // bat
 
-          console.debug("Got Data WS Message with Solar Power: '%s' and usage: '%s'", CurrentPowerSolar, CurrentUsage);
+          log.debug("Got Data WS Message with Solar Power: '%s' and usage: '%s'", CurrentPowerSolar, CurrentUsage);
 
             client.publish('solar/BatterieStand', BatterieStand);
             client.publish('solar/CurrentPowerSolar', CurrentPowerSolar.toString());
@@ -143,11 +145,11 @@ function mainWS() {
             client.publish('solar/CurrentUsageFromNetwork', CurrentUsageFromNetwork);
             client.publish('solar/CurrentBatterieLoadingAmount', CurrentBatterieLoadingAmount);
 
-            console.debug("Published to MQTT");
+            log.debug("Published to MQTT");
         }
       }
       else {
-        console.debug("Got non Data Message")
+        log.info("Got non data Message / connected message");
       }
     });
   });
