@@ -91,7 +91,7 @@ function mainWS() {
     ws.on('open', function open() {
       ws.send(dashboard_id);
       log.info("Send dashboard_id: '%s'", dashboard_id)
-      setInterval(sendHeartbeat, 2500000, ws)
+      setInterval(sendHeartbeat, 200000, ws)
       log.info("Successfully connected to WebSocket server");
     });
 

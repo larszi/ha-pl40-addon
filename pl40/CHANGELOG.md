@@ -1,3 +1,6 @@
+# v1.1.25
+feat: ajusted heartbeat timer
+
 # v1.1.24
 feat: changed logger
 
