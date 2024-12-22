@@ -1,11 +1,13 @@
 # Plexlog HomeAssistant AddOn
 
-## !Note! This Plugin is only a temporary solution as I am currently working on a LOCAL only Version of this Plugin!
+# Note
+I have finally found a way to read out the module using the Modbus protocol over the local network. Therefore, this integration will be archived. Please use the new integration instead: ![Home Assistant Plexlog Integration](https://github.com/larszi/home-assistant-plexlog) :tada: .
+---
 
 
-## :tada: This Addon will allow you to add Plexlog to your HomeAssistant 
+### This Addon will allow you to add Plexlog to your HomeAssistant 
 
-## Features
+### Features
 
 - Read CurrentPowerSolar :sun_with_face: , BatterieLevel :battery:, NetworkUsage :dollar:, BatterieUsage :electric_plug:
 - Built with MQTT, Nodejs
